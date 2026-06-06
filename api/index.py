@@ -42,9 +42,7 @@ def get_students(
 ):
 
     if class_ is None or len(class_) == 0:
-        return {
-            "students": students
-        }
+        return students
 
     filtered_students = [
         student
@@ -52,6 +50,4 @@ def get_students(
         if student["class"] in class_
     ]
 
-    return {
-        "students": filtered_students
-    }
+    return filtered_students
