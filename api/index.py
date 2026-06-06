@@ -1,4 +1,6 @@
-from fastapi import FastAPI, Query
+# api/index.py
+
+from fastapi import FastAPI, Query, Response
 from fastapi.middleware.cors import CORSMiddleware
 
 from pathlib import Path
@@ -11,6 +13,7 @@ app.add_middleware(
     allow_origins=["*"],
     allow_methods=["GET", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["Access-Control-Allow-Origin"],
 )
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,6 +28,11 @@ def home():
     return {"status": "ok"}
 
 
+@app.options("/{path:path}")
+def options_handler(path: str):
+    return Response()
+
+
 @app.get("/api")
 def get_students(
     class_: list[str] | None = Query(
@@ -33,17 +41,17 @@ def get_students(
     )
 ):
 
-    if not class_:
+    if class_ is None or len(class_) == 0:
         return {
             "students": students
         }
 
-    filtered = [
-        row
-        for row in students
-        if row["class"] in class_
+    filtered_students = [
+        student
+        for student in students
+        if student["class"] in class_
     ]
 
     return {
-        "students": filtered
+        "students": filtered_students
     }
